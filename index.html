@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Trie</title>
+	
+	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+	<meta content="utf-8" http-equiv="encoding">
+	
+	<link href="style.css" media="screen" rel="stylesheet" type="text/css" />
+
+	<script src="js/dictionary.js"></script>
+	<script src="js/brie.js"></script>
+
+	<script>
+		function urlGET (param) {
+		    var params = document.URL.split('?');
+		 
+			if(params.length > 1) {
+				params = params[1].split('&');
+		 
+				for (var  i = 0, len = params.length; i < len; i++) {
+					if (params[i].split('=')[0] === param) {
+						return params[i].split('=')[1];
+					}
+				}
+			}
+		 
+			return null;
+		};
+
+
+		function setHTML (id, html) {
+			document.getElementById(id).innerHTML = html;
+		}
+
+		window.onload = function () {
+
+			var startTime = (new Date()).getTime();
+
+			Brie.init(dictionary);
+
+			setHTML('initTime', (new Date()).getTime() - startTime);
+
+			var keyword  = urlGET('search'),
+				maxCost  = urlGET('cost'),
+				results;
+
+			if (!keyword) {
+				keyword = 'test';
+			}
+
+			if (!maxCost) {
+				maxCost = 2;
+			}
+
+			setHTML('keyword', keyword);
+			setHTML('maxCost', maxCost);
+
+			startTime = (new Date()).getTime();
+			results = Brie.searchWord(keyword, maxCost);
+			setHTML('searchTime', (new Date()).getTime() - startTime);
+
+			var resultsTxt = '<span>Found ' + results.length + ' results</span><br/>';
+			for (var i = 0, len = results.length; i < len; i++) {
+				resultsTxt += ' - ' + results[i] + '<br/>';
+			}
+
+			setHTML('results', resultsTxt);
+		}
+	</script>
+</head>
+
+<body>
+
+	<h1>brie.js</h1>
+	<h3><a href="https://github.com/bbog/brie-js" target="_blank">github.com/bbog/brie-js</a></h3>
+
+	<p>Dictionary initialized in <span id="initTime"></span> ms
+	</p>
+
+	<p>Searching for words similar to <span id="keyword"></span> with a maximum <a href="http://en.wikipedia.org/wiki/Levenshtein_distance" target="_blank">Levenshtein distance</a> of <span id="maxCost"></span>
+	<br/>Search took <span id="searchTime"></span> ms
+	</p>
+
+	<p id="results">
+	</p>
+
+</body>
+</html>
